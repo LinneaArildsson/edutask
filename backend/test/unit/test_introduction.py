@@ -63,7 +63,3 @@ def test_databaseFailure():
 
     with pytest.raises(Exception):
         user_controller.get_user_by_email("user@example.com")
-
-# ------------------------
-if __name__ == "__main__":
-    pytest.main()
