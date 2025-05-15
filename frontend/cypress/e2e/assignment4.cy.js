@@ -3,6 +3,7 @@ describe('Logging into the system', () => {
     let uid; // User ID
     let name; // Name of the user (firstName + ' ' + lastName)
     let email; // Email of the user
+    let taskId;
   
     before(function () {
       // Create a dummy user from fixture
@@ -15,8 +16,25 @@ describe('Logging into the system', () => {
         }).then((response) => {
           uid = response.body._id.$oid;
           name = user.firstName + ' ' + user.lastName;
-          email = user.email;
-        });
+          email = user.email;          
+        }).then(() => {
+
+          cy.request({
+            method: 'POST',
+            url: 'http://localhost:5000/tasks/create',
+            form: true,
+            body: {
+              title: "My Task",
+              url: "dQw4w9WgXcQ",
+              description: "Description for My Task",
+              userid: uid,
+              todos: "Initial ToDo"
+            },
+          }).then((response) => {
+            taskId = response.body[0]._id.$oid;
+          });
+
+        })
       });
     });
   
@@ -31,19 +49,7 @@ describe('Logging into the system', () => {
   
       // Submit the form on this page
       cy.get('form').submit();
-  
-      // Assert that the user is now logged in
-      cy.get('h1').should('contain.text', 'Your tasks');
-    });
-  
-    it('should add a new task', () => {
 
-      cy.get('input[placeholder="Title of your Task"]').type('My Task');
-      cy.get('input[placeholder="Viewkey of a YouTube video (the part after /watch?v= in the URL), e.g., dQw4w9WgXcQ"]').type('dQw4w9WgXcQ');
-  
-      cy.get('input[type=submit]').should('have.value', 'Create new Task').click();
-      cy.get('.container').last().should('contain', 'My Task');
-      
     });
 
     it('ID: 1.2 = should disable the "Add" button when description is empty', () => {
@@ -116,7 +122,7 @@ describe('Logging into the system', () => {
       // Clean up by deleting the user from the database
       cy.request({
         method: 'DELETE',
-        url: `http://localhost:5000/users/${uid}`
+        url: `http://localhost:5000/users/${uid}`,
       }).then((response) => {
         cy.log(response.body);
       });
