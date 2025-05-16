@@ -6,6 +6,7 @@ from src.controllers.usercontroller import UserController
 #  --------------------------------------------
 # | Test for valid email and single user found |
 #  --------------------------------------------
+@pytest.mark.unit
 def test_oneUser():
     mock_dao = MagicMock()
     mock_dao.find.return_value = [{"email": "user@example.com", "name": "SingleUser"}]
@@ -18,6 +19,7 @@ def test_oneUser():
 #  -----------------------------------------------
 # | Test for valid email and multiple users found |
 #  -----------------------------------------------
+@pytest.mark.unit
 def test_multipleUsers():
     mock_dao = MagicMock()
     mock_dao.find.return_value = [{"email": "multiple@example.com", "name": "FirstUser"}, {"email": "multiple@example.com", "name": "SecondUser"}]
@@ -30,6 +32,7 @@ def test_multipleUsers():
 #  -----------------------------------------
 # | Test for valid email and no users found |
 #  -----------------------------------------
+@pytest.mark.unit
 def test_noUsers():
     mock_dao = MagicMock()
     mock_dao.find.return_value = []
@@ -42,7 +45,7 @@ def test_noUsers():
 #  ------------------------
 # | Test for invalid email |
 #  ------------------------
-
+@pytest.mark.unit
 def test_invalidEmail():
     mock_dao = MagicMock()
 
@@ -54,7 +57,7 @@ def test_invalidEmail():
 #  -------------------------------------
 # | Test for database operation failure |
 #  -------------------------------------
-
+@pytest.mark.unit
 def test_databaseFailure():
     mock_dao = MagicMock()
     mock_dao.find.side_effect = Exception
