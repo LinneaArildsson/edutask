@@ -33,10 +33,10 @@ class UserController(Controller):
             if not users:
                 return None
             if len(users) > 1:
-                self.logger.warning(f'More than one user found with email {email}')
+                print(f'More than one user found with email {email}')
             return users[0]
         except Exception as e:
-            self.logger.error(f'Failed to fetch users by emial {email}:{e}')
+            print(f'Failed to fetch users by emial {email}:{e}')
             raise
 
     def update(self, id, data):
