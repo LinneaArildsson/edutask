@@ -81,11 +81,18 @@ describe('Logging into the system', () => {
       .find('.checker')
       .click()
       .then(() => {
-        // Retry until the class is present or timeout hits
         cy.get('@activeTodo')
           .find('.checker', { timeout: 7000 })
-          .should(($el) => {
-            expect($el.hasClass('checked'));
+          .should(($checker) => {
+            // Check if .checker has 'checked' class
+            expect($checker.hasClass('checked'));
+
+            // Check sibling .editable's CSS for line-through
+            const editable = $checker.next('.editable');
+            expect(editable).to.have.length(1);
+            // getComputedStyle from jQuery element
+            const textDecoration = window.getComputedStyle(editable[0]).getPropertyValue('text-decoration');
+            expect(textDecoration).to.include('line-through');
           });
       });
   });
@@ -104,7 +111,7 @@ describe('Logging into the system', () => {
     });
 
     cy.contains('My Task').click();
-    
+
     cy.contains('.todo-list .todo-item', 'Done ToDo')
       .as('doneTodo');
 
