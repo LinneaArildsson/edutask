@@ -49,6 +49,7 @@ def dao(mongo_client):
 
 
 # Test case to verify that the create method successfully inserts a document into the collection when the input data complies with the validator.
+@pytest.mark.integration
 def test_create_success(dao):
     data = {"name": "John", "age": 30}
 
@@ -58,6 +59,7 @@ def test_create_success(dao):
     assert "_id" in created_document
 
 # Test case to ensure that the create method raises an exception when the input data does not comply with the validator.
+@pytest.mark.integration
 def test_create_invalid_data(dao):
     invalid_data = {"age": 25} # Missing required field
 
@@ -65,6 +67,7 @@ def test_create_invalid_data(dao):
         dao.create(invalid_data)
 
 # Test case to check if the create method returns the newly created document with an _id attribute when insertion is successful.
+@pytest.mark.integration
 def test_create_return_document_with_id(dao):
     data = {"name": "Alice", "age": 35}
 
@@ -73,6 +76,7 @@ def test_create_return_document_with_id(dao):
     assert created_document["_id"] is not None
 
 # Test case to verify that the create method correctly handles unique constraint violations specified in the validator.
+@pytest.mark.integration
 def test_create_unique_constraint(dao):
     data1 = {"name": "John", "age": 30}
     data2 = {"name": "John", "age": 35}
@@ -82,6 +86,7 @@ def test_create_unique_constraint(dao):
     with pytest.raises(WriteError):
         dao.create(data2)
 
+@pytest.mark.integration
 def test_database_connection_failure(dao, monkeypatch):
     def mock_mongo_client(*args, **kwargs):
         raise ConnectionError("Connection error")
@@ -89,6 +94,7 @@ def test_database_connection_failure(dao, monkeypatch):
     with pytest.raises(ConnectionError):
         dao.create({'name': 'Test'})
 
+@pytest.mark.integration
 def test_validator_enforcement(dao):
     invalid_data = {'name': 123}  # Invalid data type for 'name'
 
