@@ -29,5 +29,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.pip
 
-      - name: Run tests
-        run: python -m pytest
+      - name: Run unit tests
+        run: python -m pytest -m unit
+
+      - name: Run integration tests
+        run: python -m pytest -m integration
