@@ -84,17 +84,29 @@ describe('Logging into the system', () => {
         cy.get('@activeTodo')
           .find('.checker', { timeout: 7000 })
           .should(($checker) => {
-            // Check if .checker has 'checked' class
             expect($checker.hasClass('checked'));
-
-            // Check sibling .editable's CSS for line-through
-            const editable = $checker.next('.editable');
-            expect(editable).to.have.length(1);
-            // getComputedStyle from jQuery element
-            const textDecoration = window.getComputedStyle(editable[0]).getPropertyValue('text-decoration');
-            expect(textDecoration).to.include('line-through');
           });
       });
+
+    cy.reload();
+
+    cy.contains('div', 'Email Address')
+      .find('input[type=text]')
+      .type(email);
+
+    cy.get('form').submit();
+
+    cy.contains('My Task').click();
+    cy.contains('.todo-list .todo-item', 'Active ToDo')
+      .as('activeTodoAfter');
+
+    cy.get('@activeTodoAfter')
+      .find('.editable', { timeout: 7000 })
+      .should(($editable) => {
+        const style = window.getComputedStyle($editable[0]);
+        expect(style.textDecorationLine).to.include('line-through');
+      });
+
   });
 
   it('ID: 2.2 = should toggle done todo to active and show it as unchecked', () => {
@@ -111,7 +123,6 @@ describe('Logging into the system', () => {
     });
 
     cy.contains('My Task').click();
-
     cy.contains('.todo-list .todo-item', 'Done ToDo')
       .as('doneTodo');
 
@@ -119,13 +130,32 @@ describe('Logging into the system', () => {
       .find('.checker')
       .click()
       .then(() => {
-        // Retry until the class is present or timeout hits
         cy.get('@doneTodo')
           .find('.checker', { timeout: 7000 })
-          .should(($el) => {
-            expect($el.hasClass('unchecked'));
+          .should(($checker) => {
+            expect($checker.hasClass('unchecked'));
           });
       });
+
+    cy.reload();
+
+    cy.contains('div', 'Email Address')
+      .find('input[type=text]')
+      .type(email);
+
+    cy.get('form').submit();
+
+    cy.contains('My Task').click();
+    cy.contains('.todo-list .todo-item', 'Done ToDo')
+      .as('doneTodoAfter');
+
+    cy.get('@doneTodoAfter')
+      .find('.editable', { timeout: 7000 })
+      .should(($editable) => {
+        const style = window.getComputedStyle($editable[0]);
+        expect(style.textDecorationLine).to.include('none');
+      });
+
   });
 
   it('ID: 3.1 = should delete todo item when pressing "X" symbol', () => {
